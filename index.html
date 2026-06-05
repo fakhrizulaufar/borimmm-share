@@ -41,7 +41,14 @@ body{
   overflow-x:hidden;
   position:relative;
 }
-/* ✨ Pixie Sparkle Background */
+
+/* ============ CANVAS PARTICLE LAYER ============ */
+#particleCanvas{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  pointer-events:none;z-index:0;
+}
+
+/* ✨ Pixie Sparkle Background (static layer under canvas) */
 body::before{
   content:'';position:fixed;top:0;left:0;right:0;bottom:0;
   background-image:
@@ -66,9 +73,56 @@ body::before{
   animation:twinkle 4s ease-in-out infinite alternate;
 }
 @keyframes twinkle{
-  0%{opacity:0.3}
-  50%{opacity:0.6}
-  100%{opacity:0.3}
+  0%{opacity:0.25}
+  50%{opacity:0.5}
+  100%{opacity:0.25}
+}
+
+/* ============ BUBU & DUDU DOM CHARACTERS ============ */
+.bg-chars{
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  pointer-events:none;z-index:1;overflow:hidden;
+  will-change:transform;
+}
+.bg-char{
+  position:absolute;
+  will-change:transform;
+  transition:opacity 0.3s;
+}
+.bg-char img{
+  width:56px;height:56px;border-radius:50%;
+  border:2px solid rgba(255,255,255,0.15);
+  box-shadow:0 4px 16px rgba(0,0,0,0.6);
+  object-fit:cover;
+  display:block;
+}
+/* Dudu spartan glow */
+.bg-char.dudu img{
+  box-shadow:0 0 20px rgba(212,175,55,0.3), 0 0 40px rgba(139,26,26,0.2);
+  border-color:rgba(212,175,55,0.25);
+}
+/* Bubu pixie glow */
+.bg-char.bubu img{
+  box-shadow:0 0 20px rgba(255,143,171,0.3), 0 0 40px rgba(221,160,221,0.15);
+  border-color:rgba(255,182,211,0.25);
+}
+.bg-char .emoji-overlay{
+  position:absolute;font-size:22px;
+  text-shadow:0 0 15px currentColor;
+  pointer-events:none;
+}
+.bg-char.dudu .emoji-overlay{color:var(--gold2)}
+.bg-char.bubu .emoji-overlay{color:var(--pixie2)}
+
+/* Floating Hearts (DOM layer) */
+.float-heart{
+  position:absolute;
+  pointer-events:none;
+  z-index:1;
+  font-size:14px;
+  opacity:0.5;
+  text-shadow:0 0 12px rgba(255,143,171,0.4);
+  will-change:transform;
 }
 
 /* Header — Spartan + Pixie mix */
@@ -210,8 +264,6 @@ header p{
 .item{animation:fadeIn 0.2s ease}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(212,175,55,0.5)}70%{box-shadow:0 0 0 12px rgba(212,175,55,0)}100%{box-shadow:0 0 0 0 rgba(212,175,55,0)}}
 .btn-add.pulse{animation:pulse 0.5s}
-
-/* ✨ Pixie dust entry effect */
 @keyframes sparkleIn{
   0%{opacity:0;transform:scale(0.8) rotate(-3deg)}
   50%{opacity:0.8}
@@ -219,129 +271,77 @@ header p{
 }
 .item:first-child{animation:sparkleIn 0.3s ease}
 
-/* ============ BUBU & DUDU LIVE BACKGROUND ============ */
-.bg-chars{
-  position:fixed;top:0;left:0;right:0;bottom:0;
-  pointer-events:none;z-index:0;overflow:hidden;
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(13, 5, 5, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
-
-/* === DUDU (Spartan Warrior) === */
-.dudu{
-  position:absolute;font-size:28px;
-  animation:duduFloat 6s ease-in-out infinite;
-  text-shadow:0 0 20px rgba(212,175,55,0.4), 0 0 40px rgba(139,26,26,0.2);
+.modal-content {
+  background: linear-gradient(135deg, var(--card), var(--card2));
+  border: 1px solid var(--gold);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  width: 90%;
+  max-width: 340px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.7), 0 0 20px rgba(212,175,55,0.2);
+  animation: modalScale 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-.dudu-1{bottom:12%;left:5%;animation-delay:0s}
-.dudu-2{bottom:25%;right:8%;animation-delay:2s;font-size:22px}
-.dudu-3{top:35%;left:3%;animation-delay:4s;font-size:18px;opacity:0.5}
-.dudu-4{top:55%;right:3%;animation-delay:1s;font-size:20px;opacity:0.4}
-.dudu-5{bottom:5%;left:45%;animation-delay:3s;font-size:16px;opacity:0.35}
-.dudu-6{top:20%;right:15%;animation-delay:5s;font-size:15px;opacity:0.3}
-
-@keyframes duduFloat{
-  0%,100%{transform:translateY(0) rotate(0deg)}
-  25%{transform:translateY(-12px) rotate(3deg)}
-  50%{transform:translateY(-5px) rotate(-2deg)}
-  75%{transform:translateY(-18px) rotate(4deg)}
+@keyframes modalScale {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
-
-/* Dudu fire glow */
-.dudu-fire{
-  position:absolute;width:4px;height:4px;border-radius:50%;
-  background:var(--gold2);box-shadow:0 0 6px var(--gold), 0 0 12px var(--accent2);
-  animation:fireDance 3s ease-in-out infinite;
+.modal-content h3 {
+  font-size: 18px;
+  margin-bottom: 18px;
+  color: var(--gold2);
+  text-shadow: 0 0 10px rgba(212,175,55,0.3);
+  font-weight: 700;
 }
-.dudu-fire-1{bottom:10%;left:8%}
-.dudu-fire-2{bottom:22%;right:11%;animation-delay:1s}
-.dudu-fire-3{bottom:30%;left:2%;animation-delay:2s}
-@keyframes fireDance{
-  0%,100%{opacity:0.3;transform:scale(1)}
-  50%{opacity:0.9;transform:scale(2);box-shadow:0 0 10px var(--gold2),0 0 20px var(--accent2)}
+.modal-content input {
+  width: 100%;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  outline: none;
+  text-align: center;
+  margin-bottom: 20px;
+  transition: border 0.2s, box-shadow 0.2s;
 }
-
-/* === BUBU (Pixie Fairy) === */
-.bubu{
-  position:absolute;font-size:26px;
-  animation:bubuFloat 7s ease-in-out infinite;
-  text-shadow:0 0 20px rgba(255,143,171,0.5), 0 0 40px rgba(221,160,221,0.3);
-  filter:drop-shadow(0 0 6px rgba(255,182,211,0.3));
+.modal-content input:focus {
+  border-color: var(--pixie);
+  box-shadow: 0 0 12px var(--pixie-glow);
 }
-.bubu-1{top:15%;right:10%;animation-delay:0s}
-.bubu-2{top:30%;left:6%;animation-delay:2.5s;font-size:20px}
-.bubu-3{bottom:20%;right:5%;animation-delay:4.5s;font-size:22px;opacity:0.7}
-.bubu-4{top:50%;left:2%;animation-delay:1.5s;font-size:18px;opacity:0.55}
-.bubu-5{top:10%;left:40%;animation-delay:3.5s;font-size:16px;opacity:0.4}
-.bubu-6{bottom:35%;left:12%;animation-delay:5.5s;font-size:14px;opacity:0.35}
-
-@keyframes bubuFloat{
-  0%,100%{transform:translateY(0) rotate(0deg) scale(1)}
-  20%{transform:translateY(-15px) rotate(-5deg) scale(1.05)}
-  40%{transform:translateY(-5px) rotate(3deg) scale(0.98)}
-  60%{transform:translateY(-20px) rotate(-3deg) scale(1.03)}
-  80%{transform:translateY(-8px) rotate(4deg) scale(1)}
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: linear-gradient(135deg, var(--gold), #B8860B);
+  color: #1A0A0A;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(212,175,55,0.3);
+  transition: transform 0.1s;
 }
-
-/* Bubu sparkle trail */
-.bubu-sparkle{
-  position:absolute;width:6px;height:6px;border-radius:50%;
-  background:var(--pixie2);box-shadow:0 0 8px var(--pixie), 0 0 16px var(--pixie-glow);
-  animation:sparklePulse 4s ease-in-out infinite;
-}
-.bubu-sparkle-1{top:20%;right:12%}
-.bubu-sparkle-2{top:35%;left:8%;animation-delay:1.5s}
-.bubu-sparkle-3{bottom:25%;right:8%;animation-delay:3s}
-.bubu-sparkle-4{top:55%;left:5%;animation-delay:0.8s}
-.bubu-sparkle-5{bottom:40%;left:15%;animation-delay:2.2s}
-@keyframes sparklePulse{
-  0%,100%{opacity:0;transform:scale(0.5)}
-  50%{opacity:0.9;transform:scale(1.8);box-shadow:0 0 12px var(--pixie2),0 0 24px var(--pixie)}
-}
-
-/* === Floating Hearts (cute romantic) === */
-.heart{
-  position:absolute;font-size:14px;opacity:0.6;
-  animation:heartFloat 8s ease-in-out infinite;
-  text-shadow:0 0 10px rgba(255,143,171,0.5);
-}
-.heart-1{top:8%;left:18%;animation-delay:0s}
-.heart-2{bottom:30%;left:50%;animation-delay:2s;font-size:11px}
-.heart-3{top:60%;right:6%;animation-delay:4s;font-size:12px}
-.heart-4{top:12%;left:60%;animation-delay:6s;font-size:10px;opacity:0.4}
-.heart-5{bottom:15%;right:25%;animation-delay:1s;font-size:13px}
-@keyframes heartFloat{
-  0%,100%{transform:translateY(0) scale(1);opacity:0.6}
-  25%{transform:translateY(-10px) scale(1.15);opacity:0.9}
-  50%{transform:translateY(-5px) scale(0.95);opacity:0.5}
-  75%{transform:translateY(-18px) scale(1.1);opacity:0.8}
-}
-
-/* === Romantic butterfly for Bubu === */
-.butterfly{
-  position:absolute;font-size:16px;opacity:0.4;
-  animation:butterflyFly 12s ease-in-out infinite;
-}
-.butterfly-1{top:5%;left:25%;animation-delay:0s}
-.butterfly-2{bottom:8%;right:20%;animation-delay:6s}
-@keyframes butterflyFly{
-  0%,100%{transform:translate(0,0) rotate(0deg)}
-  10%{transform:translate(10px,-20px) rotate(5deg)}
-  20%{transform:translate(5px,-10px) rotate(-3deg)}
-  30%{transform:translate(30px,-40px) rotate(8deg)}
-  40%{transform:translate(15px,-15px) rotate(-5deg)}
-  50%{transform:translate(-10px,-30px) rotate(4deg)}
-  60%{transform:translate(-25px,-10px) rotate(-2deg)}
-  70%{transform:translate(-5px,-35px) rotate(6deg)}
-  80%{transform:translate(8px,-20px) rotate(-4deg)}
-  90%{transform:translate(-15px,-5px) rotate(3deg)}
+.btn-primary:active {
+  transform: scale(0.97);
 }
 
 /* Responsive */
 @media(max-width:400px){
-  .dudu{font-size:20px}
-  .dudu-3,.dudu-4,.dudu-5,.dudu-6{display:none}
-  .bubu{font-size:20px}
-  .bubu-4,.bubu-5,.bubu-6{display:none}
-  .heart-4,.butterfly-2{display:none}
+  .bg-char img{width:40px;height:40px}
 }
 </style>
 <link rel="preconnect" href="https://www.gstatic.com">
@@ -349,42 +349,23 @@ header p{
 </head>
 <body>
 
-<!-- BUBU & DUDU LIVE BACKGROUND -->
-<div class="bg-chars">
-  <!-- DUDU — Spartan Warrior -->
-  <div class="dudu dudu-1">⚔️</div>
-  <div class="dudu dudu-2">🛡️</div>
-  <div class="dudu dudu-3">🔥</div>
-  <div class="dudu dudu-4">⚔️</div>
-  <div class="dudu dudu-5">💀</div>
-  <div class="dudu dudu-6">🗡️</div>
-  <div class="dudu-fire dudu-fire-1"></div>
-  <div class="dudu-fire dudu-fire-2"></div>
-  <div class="dudu-fire dudu-fire-3"></div>
+<!-- CANVAS PARTICLE LAYER -->
+<canvas id="particleCanvas"></canvas>
 
-  <!-- BUBU — Pixie Fairy -->
-  <div class="bubu bubu-1">🧚</div>
-  <div class="bubu bubu-2">✨</div>
-  <div class="bubu bubu-3">🌸</div>
-  <div class="bubu bubu-4">🧚</div>
-  <div class="bubu bubu-5">🦋</div>
-  <div class="bubu bubu-6">💫</div>
-  <div class="bubu-sparkle bubu-sparkle-1"></div>
-  <div class="bubu-sparkle bubu-sparkle-2"></div>
-  <div class="bubu-sparkle bubu-sparkle-3"></div>
-  <div class="bubu-sparkle bubu-sparkle-4"></div>
-  <div class="bubu-sparkle bubu-sparkle-5"></div>
+<!-- BUBU & DUDU LIVE BACKGROUND (DOM layer on top of canvas) -->
+<div class="bg-chars" id="bgChars">
+  <!-- DUDU — Spartan Warrior (populated by JS) -->
+  <!-- BUBU — Pixie Fairy (populated by JS) -->
+  <!-- Hearts (populated by JS) -->
+</div>
 
-  <!-- Cute Romantic Hearts -->
-  <div class="heart heart-1">💕</div>
-  <div class="heart heart-2">💗</div>
-  <div class="heart heart-3">♥</div>
-  <div class="heart heart-4">💖</div>
-  <div class="heart heart-5">💕</div>
-
-  <!-- Butterfly -->
-  <div class="butterfly butterfly-1">🦋</div>
-  <div class="butterfly butterfly-2">🦋</div>
+<!-- Name Input Modal -->
+<div id="nameModal" class="modal-overlay" style="display: none;">
+  <div class="modal-content">
+    <h3>Siapa nama kamu, manis? ✦</h3>
+    <input type="text" id="modalNameInput" placeholder="Nama kamu..." maxlength="15" autocomplete="off">
+    <button id="btnSaveName" class="btn-primary">Masuk ♥</button>
+  </div>
 </div>
 
 <header>
@@ -426,7 +407,429 @@ header p{
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
 <script src="firebase-config.js"></script>
 <script>
-// ======================== INIT FIREBASE ========================
+// ================================================================
+//  PARTICLE SYSTEM — Canvas-based live wallpaper engine
+// ================================================================
+
+const canvas = document.getElementById('particleCanvas');
+const ctx = canvas.getContext('2d');
+let W, H;
+
+function resizeCanvas() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+// ---- Particle Classes ----
+
+class Particle {
+  constructor(x, y, type) {
+    this.x = x;
+    this.y = y;
+    this.type = type; // 'fire', 'sparkle', 'heart', 'burstHeart', 'burstFire'
+    this.init();
+  }
+  init() {
+    switch(this.type) {
+      case 'fire':
+        this.vx = (Math.random() - 0.5) * 0.8;
+        this.vy = -(Math.random() * 1.5 + 0.5);
+        this.size = Math.random() * 4 + 2;
+        this.life = 1;
+        this.maxLife = Math.random() * 60 + 40;
+        this.decay = 1 / this.maxLife;
+        this.colors = ['#FF4500','#FF6600','#FFD700','#FF8C00','#FF0000'];
+        this.color = this.colors[Math.floor(Math.random() * this.colors.length)];
+        break;
+      case 'sparkle':
+        this.vx = (Math.random() - 0.5) * 0.4;
+        this.vy = -(Math.random() * 0.6 + 0.2);
+        this.size = Math.random() * 3 + 1.5;
+        this.life = 1;
+        this.maxLife = Math.random() * 80 + 50;
+        this.decay = 1 / this.maxLife;
+        this.colors = ['#FFB6D3','#FF8FAB','#DDA0DD','#FFD700','#FFF8DC'];
+        this.color = this.colors[Math.floor(Math.random() * this.colors.length)];
+        this.twinkle = Math.random() * Math.PI * 2;
+        this.twinkleSpeed = Math.random() * 0.05 + 0.02;
+        break;
+      case 'heart':
+        this.vx = (Math.random() - 0.5) * 0.3;
+        this.vy = Math.random() * 0.8 + 0.3;
+        this.size = Math.random() * 10 + 8;
+        this.life = 1;
+        this.maxLife = Math.random() * 200 + 150;
+        this.decay = 1 / this.maxLife;
+        this.colors = ['#FF6B8A','#FF8FAB','#FFB6D3','#FF1493','#FF69B4','#DDA0DD'];
+        this.color = this.colors[Math.floor(Math.random() * this.colors.length)];
+        this.swing = Math.random() * Math.PI * 2;
+        this.swingSpeed = Math.random() * 0.02 + 0.01;
+        this.swingAmp = Math.random() * 30 + 10;
+        this.heartChar = Math.random() > 0.5 ? '♥' : '💕';
+        break;
+      case 'burstHeart':
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 4 + 1;
+        this.vx = Math.cos(angle) * speed;
+        this.vy = Math.sin(angle) * speed - 1;
+        this.size = Math.random() * 14 + 10;
+        this.life = 1;
+        this.maxLife = Math.random() * 50 + 40;
+        this.decay = 1 / this.maxLife;
+        this.colors = ['#FF6B8A','#FF8FAB','#FFB6D3','#FF1493','#FF69B4'];
+        this.color = this.colors[Math.floor(Math.random() * this.colors.length)];
+        this.heartChar = Math.random() > 0.3 ? '♥' : '💕';
+        break;
+      case 'burstFire':
+        const a2 = Math.random() * Math.PI * 2;
+        const s2 = Math.random() * 5 + 2;
+        this.vx = Math.cos(a2) * s2;
+        this.vy = Math.sin(a2) * s2 - 1;
+        this.size = Math.random() * 5 + 2;
+        this.life = 1;
+        this.maxLife = Math.random() * 30 + 25;
+        this.decay = 1 / this.maxLife;
+        this.colors = ['#FF4500','#FF6600','#FFD700','#FF8C00','#FF0000','#FFFF00'];
+        this.color = this.colors[Math.floor(Math.random() * this.colors.length)];
+        break;
+    }
+    this.alpha = 1;
+  }
+  update(delta) {
+    this.life -= this.decay * (delta / 16);
+    this.alpha = Math.max(0, this.life);
+    this.x += this.vx * (delta / 16);
+    this.y += this.vy * (delta / 16);
+
+    switch(this.type) {
+      case 'fire':
+        this.vx += (Math.random() - 0.5) * 0.05;
+        this.size *= 0.995;
+        break;
+      case 'sparkle':
+        this.twinkle += this.twinkleSpeed * (delta / 16);
+        this.vx += (Math.random() - 0.5) * 0.02;
+        break;
+      case 'heart':
+        this.swing += this.swingSpeed * (delta / 16);
+        this.x += Math.sin(this.swing) * this.swingAmp * 0.01;
+        this.vy += 0.002 * (delta / 16); // gravity
+        break;
+      case 'burstHeart':
+        this.vy += 0.03 * (delta / 16); // gravity
+        this.vx *= 0.99;
+        break;
+      case 'burstFire':
+        this.vy += 0.02 * (delta / 16);
+        this.vx *= 0.98;
+        this.size *= 0.99;
+        break;
+    }
+    return this.life > 0;
+  }
+  draw() {
+    ctx.save();
+    ctx.globalAlpha = this.alpha;
+    if (this.type === 'sparkle') {
+      const s = this.size * (0.5 + 0.5 * Math.sin(this.twinkle));
+      ctx.shadowColor = this.color;
+      ctx.shadowBlur = 10;
+      ctx.fillStyle = this.color;
+      // Star shape
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, Math.max(0.5, s), 0, Math.PI * 2);
+      ctx.fill();
+      // Cross glow
+      ctx.globalAlpha = this.alpha * 0.4;
+      ctx.strokeStyle = this.color;
+      ctx.lineWidth = 0.5;
+      ctx.beginPath();
+      ctx.moveTo(this.x - s * 3, this.y);
+      ctx.lineTo(this.x + s * 3, this.y);
+      ctx.moveTo(this.x, this.y - s * 3);
+      ctx.lineTo(this.x, this.y + s * 3);
+      ctx.stroke();
+    } else if (this.type === 'heart' || this.type === 'burstHeart') {
+      ctx.shadowColor = this.color;
+      ctx.shadowBlur = 15;
+      ctx.fillStyle = this.color;
+      ctx.font = `${Math.max(6, this.size)}px sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(this.heartChar, this.x, this.y);
+    } else if (this.type === 'fire' || this.type === 'burstFire') {
+      ctx.shadowColor = this.color;
+      ctx.shadowBlur = 20;
+      ctx.fillStyle = this.color;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, Math.max(0.5, this.size), 0, Math.PI * 2);
+      ctx.fill();
+      // Inner glow
+      ctx.globalAlpha = this.alpha * 0.5;
+      ctx.shadowBlur = 30;
+      ctx.fillStyle = '#FFFFAA';
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, Math.max(0.3, this.size * 0.4), 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+}
+
+// ---- Particle Emitters ----
+
+let particles = [];
+let frameCount = 0;
+
+// Emitter positions (relative to viewport)
+const emitters = {
+  duduFires: [
+    {x: 0.06, y: 0.82, rate: 3},
+    {x: 0.92, y: 0.70, rate: 2},
+    {x: 0.03, y: 0.60, rate: 2},
+    {x: 0.96, y: 0.40, rate: 1.5},
+  ],
+  bubuSparkles: [
+    {x: 0.90, y: 0.15, rate: 3},
+    {x: 0.07, y: 0.28, rate: 2.5},
+    {x: 0.93, y: 0.75, rate: 2},
+    {x: 0.04, y: 0.50, rate: 1.5},
+    {x: 0.40, y: 0.10, rate: 1.5},
+  ]
+};
+
+function emitParticles() {
+  // Fire from Dudu positions
+  for (const e of emitters.duduFires) {
+    if (Math.random() < e.rate * 0.02) {
+      particles.push(new Particle(e.x * W + (Math.random() - 0.5) * 20, e.y * H + (Math.random() - 0.5) * 10, 'fire'));
+    }
+  }
+  // Sparkles from Bubu positions
+  for (const e of emitters.bubuSparkles) {
+    if (Math.random() < e.rate * 0.025) {
+      particles.push(new Particle(e.x * W + (Math.random() - 0.5) * 20, e.y * H + (Math.random() - 0.5) * 10, 'sparkle'));
+    }
+  }
+  // Heart rain (continuous)
+  if (Math.random() < 0.06) {
+    particles.push(new Particle(Math.random() * W, -10, 'heart'));
+  }
+}
+
+function addBurst(x, y, type) {
+  const count = type === 'heart' ? 20 : 25;
+  const pType = type === 'heart' ? 'burstHeart' : 'burstFire';
+  for (let i = 0; i < count; i++) {
+    particles.push(new Particle(x, y, pType));
+  }
+}
+
+// ---- DOM Character Animation (requestAnimationFrame) ----
+
+const bgChars = document.getElementById('bgChars');
+const charData = [];
+
+// Dudu characters
+const duduEmojis = ['🛡️', '🔥', '⚔️', '💀', '🗡️', '👑'];
+const duduPositions = [
+  {x: 0.05, y: 0.88, img: 'assets/dudu_spartan.png'},
+  {x: 0.08, y: 0.70, img: null},
+  {x: 0.93, y: 0.72, img: null},
+  {x: 0.04, y: 0.42, img: null},
+  {x: 0.95, y: 0.35, img: null},
+  {x: 0.50, y: 0.92, img: null},
+];
+
+const bubuEmojis = ['✨', '🌸', '🧚', '🦋', '💫', '🌙'];
+const bubuPositions = [
+  {x: 0.88, y: 0.12, img: 'assets/bubu_fairy.png'},
+  {x: 0.10, y: 0.25, img: null},
+  {x: 0.90, y: 0.78, img: null},
+  {x: 0.06, y: 0.52, img: null},
+  {x: 0.40, y: 0.08, img: null},
+  {x: 0.60, y: 0.15, img: null},
+];
+
+// Build DOM characters
+function buildDOMChars() {
+  bgChars.innerHTML = '';
+  charData.length = 0;
+
+  // Dudu chars
+  duduPositions.forEach((pos, i) => {
+    const el = document.createElement('div');
+    el.className = 'bg-char dudu';
+    if (pos.img) {
+      el.innerHTML = `<img src="${pos.img}" alt="Dudu Spartan">`;
+    } else {
+      el.innerHTML = `<span class="emoji-overlay" style="font-size:26px">${duduEmojis[i % duduEmojis.length]}</span>`;
+    }
+    bgChars.appendChild(el);
+    charData.push({
+      el, type: 'dudu',
+      baseX: pos.x, baseY: pos.y,
+      phase: Math.random() * Math.PI * 2,
+      speed: 0.003 + Math.random() * 0.002,
+      ampX: 8 + Math.random() * 15,
+      ampY: 10 + Math.random() * 18,
+      rotSpeed: (Math.random() - 0.5) * 0.002,
+      rot: 0,
+      scale: 0.85 + Math.random() * 0.3,
+    });
+  });
+
+  // Bubu chars
+  bubuPositions.forEach((pos, i) => {
+    const el = document.createElement('div');
+    el.className = 'bg-char bubu';
+    if (pos.img) {
+      el.innerHTML = `<img src="${pos.img}" alt="Bubu Fairy">`;
+    } else {
+      el.innerHTML = `<span class="emoji-overlay" style="font-size:24px">${bubuEmojis[i % bubuEmojis.length]}</span>`;
+    }
+    bgChars.appendChild(el);
+    charData.push({
+      el, type: 'bubu',
+      baseX: pos.x, baseY: pos.y,
+      phase: Math.random() * Math.PI * 2,
+      speed: 0.002 + Math.random() * 0.002,
+      ampX: 12 + Math.random() * 20,
+      ampY: 8 + Math.random() * 15,
+      rotSpeed: (Math.random() - 0.5) * 0.003,
+      rot: 0,
+      scale: 0.85 + Math.random() * 0.3,
+      wingPhase: 0,
+    });
+  });
+}
+buildDOMChars();
+
+// ---- Parallax ----
+
+let scrollY = 0;
+window.addEventListener('scroll', () => {
+  scrollY = window.scrollY;
+}, {passive: true});
+
+// ---- RAF Animation Loop ----
+
+let lastTime = 0;
+
+function animate(time) {
+  const delta = Math.min(time - lastTime, 50); // cap at 50ms
+  lastTime = time;
+  frameCount++;
+
+  // --- Clear canvas ---
+  ctx.clearRect(0, 0, W, H);
+
+  // --- Update & draw particles ---
+  emitParticles();
+  for (let i = particles.length - 1; i >= 0; i--) {
+    if (!particles[i].update(delta)) {
+      particles.splice(i, 1);
+    } else {
+      particles[i].draw();
+    }
+  }
+
+  // Limit particles
+  if (particles.length > 400) {
+    particles.splice(0, particles.length - 400);
+  }
+
+  // --- Update DOM characters ---
+  for (const c of charData) {
+    c.phase += c.speed * (delta / 16);
+    if (c.type === 'bubu') c.wingPhase += 0.08 * (delta / 16);
+
+    // Parallax: move slower when scrolling
+    const parallaxFactor = c.type === 'dudu' ? 0.08 : 0.04;
+    const parallaxOffset = scrollY * parallaxFactor;
+
+    // Organic movement
+    const xOff = Math.sin(c.phase) * c.ampX + Math.sin(c.phase * 0.7) * c.ampX * 0.3;
+    const yOff = Math.cos(c.phase * 0.8) * c.ampY + Math.sin(c.phase * 1.3) * c.ampY * 0.2;
+
+    let x = c.baseX * W + xOff;
+    let y = c.baseY * H + yOff - parallaxOffset;
+
+    c.rot += c.rotSpeed * (delta / 16);
+    const rot = c.rot + (c.type === 'bubu' ? Math.sin(c.wingPhase) * 0.05 : Math.sin(c.phase * 0.5) * 0.03);
+
+    // Floating scale pulse for bubu (wing flap)
+    let scale = c.scale;
+    if (c.type === 'bubu') {
+      scale *= 0.95 + 0.05 * Math.sin(c.wingPhase * 2);
+    }
+
+    c.el.style.transform = `translate(${x}px, ${y}px) rotate(${rot}rad) scale(${scale})`;
+  }
+
+  requestAnimationFrame(animate);
+}
+requestAnimationFrame(animate);
+
+// ---- Interactive: Touch/Click burst effects ----
+
+function handleInteraction(x, y) {
+  // Check if tapped on interactive area (not on UI elements)
+  const target = document.elementFromPoint(x, y);
+  if (target && (target.closest('.tabs') || target.closest('.input-bar') || target.closest('header') ||
+      target.closest('.status-bar') || target.closest('.list') || target.closest('.modal-overlay'))) {
+    return; // Don't trigger on UI
+  }
+
+  // Burst hearts + fire/sparkles based on position
+  // Left side = Dudu fire, Right side = Bubu sparkles, Center = hearts
+  if (x < W * 0.4) {
+    addBurst(x, y, 'fire');
+  } else if (x > W * 0.6) {
+    addBurst(x, y, 'heart');
+  } else {
+    // Middle = mix!
+    addBurst(x, y, 'heart');
+    setTimeout(() => addBurst(x, y, 'fire'), 100);
+  }
+}
+
+// Touch events
+document.addEventListener('touchstart', (e) => {
+  const touch = e.touches[0];
+  handleInteraction(touch.clientX, touch.clientY);
+}, {passive: true});
+
+// Click events (for desktop)
+document.addEventListener('click', (e) => {
+  handleInteraction(e.clientX, e.clientY);
+});
+
+// Window resize update
+window.addEventListener('resize', () => {
+  resizeCanvas();
+  // Reposition DOM chars based on new W/H
+  for (const c of charData) {
+    c.el.style.transform = `translate(${c.baseX * W}px, ${c.baseY * H}px)`;
+  }
+});
+
+// ---- Performance: throttle on mobile ----
+let lowPerf = false;
+// Check every 30 seconds, reduce particles if needed
+setInterval(() => {
+  if (particles.length > 300) {
+    // Remove oldest particles
+    particles.splice(0, Math.floor(particles.length * 0.3));
+  }
+}, 30000);
+
+// ================================================================
+//  FIREBASE APP — Shared List
+// ================================================================
+
 let firebaseOk = false;
 try {
   if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "ISI_API_KEY_DISINI") {
@@ -435,7 +838,6 @@ try {
   }
 } catch(e) {}
 
-// ======================== APP STATE ========================
 let currentFilter = "all";
 let allItems = {};
 let userId = null;
@@ -444,7 +846,6 @@ let dbRef = null;
 let connectedUsers = 0;
 let myRef = null;
 
-// ======================== DOM REFS ========================
 const listEl = document.getElementById("listContainer");
 const inputEl = document.getElementById("itemInput");
 const btnAdd = document.getElementById("btnAdd");
@@ -453,12 +854,12 @@ const statusBar = document.getElementById("statusBar");
 const statusText = document.getElementById("statusText");
 const usersOnline = document.getElementById("usersOnline");
 
-// ======================== PWA SETUP ========================
+// PWA
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("service-worker.js").catch(()=>{});
 }
 
-// ======================== AUTH & DB ========================
+// Auth & DB
 async function initApp() {
   if (!firebaseOk) {
     listEl.innerHTML = `<div class="empty-state">
@@ -471,20 +872,39 @@ async function initApp() {
     return;
   }
 
+  const savedName = localStorage.getItem("borimmm_name");
+  if (savedName) {
+    userName = savedName;
+    await startFirebaseSession();
+  } else {
+    const nameModal = document.getElementById("nameModal");
+    const modalNameInput = document.getElementById("modalNameInput");
+    const btnSaveName = document.getElementById("btnSaveName");
+    
+    nameModal.style.display = "flex";
+    modalNameInput.focus();
+    
+    const saveNameFn = async () => {
+      let name = modalNameInput.value.trim();
+      if (!name) name = "Aku";
+      userName = name;
+      localStorage.setItem("borimmm_name", userName);
+      nameModal.style.display = "none";
+      await startFirebaseSession();
+    };
+    
+    btnSaveName.onclick = saveNameFn;
+    modalNameInput.onkeydown = (e) => {
+      if (e.key === "Enter") saveNameFn();
+    };
+  }
+}
+
+async function startFirebaseSession() {
   try {
     const userCred = await firebase.auth().signInAnonymously();
     userId = userCred.user.uid;
 
-    const savedName = localStorage.getItem("borimmm_name");
-    if (savedName) {
-      userName = savedName;
-    } else {
-      userName = prompt("Siapa nama kamu?", "Aku");
-      if (!userName) userName = "Aku";
-      localStorage.setItem("borimmm_name", userName);
-    }
-
-    // Presence
     const presenceRef = firebase.database().ref(".info/connected");
     myRef = firebase.database().ref("presence/" + userId);
 
@@ -528,7 +948,7 @@ async function initApp() {
   }
 }
 
-// ======================== RENDER ========================
+// Render
 function renderList() {
   const entries = Object.entries(allItems);
   if (entries.length === 0) {
@@ -597,7 +1017,7 @@ function updateCounts() {
   }
 }
 
-// ======================== ACTIONS ========================
+// Actions
 async function addItem() {
   const text = inputEl.value.trim();
   if (!text || !dbRef) return;
@@ -639,7 +1059,7 @@ async function deleteItem(id) {
   } catch(e) {}
 }
 
-// ======================== TABS ========================
+// Tabs
 document.querySelectorAll(".tab").forEach(tab => {
   tab.addEventListener("click", () => {
     document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
@@ -649,7 +1069,7 @@ document.querySelectorAll(".tab").forEach(tab => {
   });
 });
 
-// ======================== INPUT ========================
+// Input
 inputEl.addEventListener("input", () => {
   btnAdd.disabled = !inputEl.value.trim();
 });
@@ -658,14 +1078,14 @@ inputEl.addEventListener("keydown", (e) => {
 });
 btnAdd.addEventListener("click", addItem);
 
-// ======================== UTILS ========================
+// Utils
 function escapeHtml(str) {
   const d = document.createElement("div");
   d.textContent = str;
   return d.innerHTML;
 }
 
-// ======================== START ========================
+// Start
 initApp();
 
 if (firebaseOk) {
