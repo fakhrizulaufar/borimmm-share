@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Borimmm">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' fill='%238B1A1A' rx='32'/%3E%3Ctext x='96' y='130' font-size='100' text-anchor='middle' fill='%23FFD700'%3E♥%3C/text%3E%3C/svg%3E">
+<title>Borimmm Share</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0D0505;
+  --card:#1A0D10;
+  --card2:#2A1418;
+  --border:#3A2025;
+  --accent:#8B1A1A;
+  --accent2:#B22222;
+  --gold:#D4AF37;
+  --gold2:#FFD700;
+  --pixie:#FF8FAB;
+  --pixie2:#FFB6D3;
+  --pixie3:#DDA0DD;
+  --pixie-glow:rgba(255,143,171,0.3);
+  --star:#FFF8DC;
+  --text:#F5E6E8;
+  --text2:#C4A0A8;
+  --text3:#8A6068;
+  --done:#4A7A5A;
+  --done-bg:#1A2A1A;
+  --shadow:0 2px 16px rgba(139,26,26,0.3);
+  --shadow-pixie:0 0 20px rgba(255,143,171,0.15);
+  --radius:14px;
+  --radius-sm:10px;
+}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:100px;
+  overflow-x:hidden;
+  position:relative;
+}
+/* ✨ Pixie Sparkle Background */
+body::before{
+  content:'';position:fixed;top:0;left:0;right:0;bottom:0;
+  background-image:
+    radial-gradient(1px 1px at 10% 20%, var(--pixie2) 50%, transparent 50%),
+    radial-gradient(1px 1px at 30% 60%, var(--gold2) 50%, transparent 50%),
+    radial-gradient(1.5px 1.5px at 50% 10%, var(--pixie) 50%, transparent 50%),
+    radial-gradient(1px 1px at 70% 40%, var(--gold) 50%, transparent 50%),
+    radial-gradient(1.5px 1.5px at 90% 70%, var(--pixie2) 50%, transparent 50%),
+    radial-gradient(1px 1px at 20% 80%, var(--star) 50%, transparent 50%),
+    radial-gradient(1px 1px at 60% 90%, var(--pixie3) 50%, transparent 50%),
+    radial-gradient(1.5px 1.5px at 80% 15%, var(--gold2) 50%, transparent 50%),
+    radial-gradient(1px 1px at 15% 45%, var(--pixie) 50%, transparent 50%),
+    radial-gradient(1px 1px at 45% 75%, var(--star) 50%, transparent 50%),
+    radial-gradient(1.5px 1.5px at 85% 50%, var(--pixie2) 50%, transparent 50%),
+    radial-gradient(1px 1px at 5% 90%, var(--gold) 50%, transparent 50%),
+    radial-gradient(1px 1px at 95% 30%, var(--pixie3) 50%, transparent 50%),
+    radial-gradient(1.5px 1.5px at 35% 35%, var(--star) 50%, transparent 50%),
+    radial-gradient(1px 1px at 65% 65%, var(--pixie) 50%, transparent 50%);
+  background-size:200px 200px;
+  pointer-events:none;z-index:0;
+  opacity:0.4;
+  animation:twinkle 4s ease-in-out infinite alternate;
+}
+@keyframes twinkle{
+  0%{opacity:0.3}
+  50%{opacity:0.6}
+  100%{opacity:0.3}
+}
+
+/* Header — Spartan + Pixie mix */
+header{
+  background:linear-gradient(135deg, #0D0505 0%, var(--accent) 50%, #3A0A20 100%);
+  padding:22px 18px 16px;text-align:center;
+  position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 20px rgba(139,26,26,0.4), inset 0 0 40px rgba(255,143,171,0.05);
+  border-bottom:1px solid rgba(212,175,55,0.15);
+  position:relative;overflow:hidden;
+}
+header::before{
+  content:'✦ ⋆｡°✩';position:absolute;top:4px;right:12px;
+  font-size:10px;color:var(--pixie2);opacity:0.4;letter-spacing:4px;
+}
+header::after{
+  content:'⚔';position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  font-size:18px;color:var(--gold);opacity:0.2;
+}
+header h1{
+  font-size:23px;font-weight:800;letter-spacing:1px;
+  text-shadow:0 0 20px rgba(212,175,55,0.3);
+}
+header h1 .gwm{color:var(--gold2)}
+header h1 .pix{color:var(--pixie2);text-shadow:0 0 15px var(--pixie-glow)}
+header p{
+  font-size:11px;color:var(--pixie2);margin-top:3px;
+  opacity:0.7;letter-spacing:2px;
+}
+/* Tab Filter */
+.tabs{display:flex;gap:6px;padding:10px 14px;overflow-x:auto;scrollbar-width:none;
+  -webkit-overflow-scrolling:touch;position:sticky;top:68px;z-index:99;
+  background:var(--bg);border-bottom:1px solid var(--border);}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:7px 16px;border-radius:20px;font-size:13px;font-weight:600;
+  border:1px solid var(--border);background:var(--card);color:var(--text2);
+  cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.tab.active{
+  background:linear-gradient(135deg, var(--accent), #4A1020);border-color:var(--gold);
+  color:var(--gold2);box-shadow:0 0 16px rgba(212,175,55,0.2), 0 0 8px var(--pixie-glow);
+}
+.tab .count{font-size:11px;color:var(--text3);margin-left:4px}
+.tab.active .count{color:var(--pixie2)}
+/* Input Bar */
+.input-bar{
+  display:flex;gap:8px;padding:10px 14px;position:sticky;top:112px;z-index:98;
+  background:var(--bg);border-bottom:1px solid var(--border);padding-bottom:12px;
+}
+.input-bar input{flex:1;padding:12px 16px;border-radius:var(--radius-sm);
+  border:1px solid var(--border);background:var(--card);color:var(--text);
+  font-size:15px;outline:none;transition:border 0.2s, box-shadow 0.2s;}
+.input-bar input:focus{border-color:var(--pixie);box-shadow:0 0 12px var(--pixie-glow)}
+.input-bar input::placeholder{color:var(--text3)}
+.input-bar select{padding:12px 10px;border-radius:var(--radius-sm);
+  border:1px solid var(--border);background:var(--card);color:var(--text);
+  font-size:13px;outline:none;cursor:pointer;min-width:85px;}
+.input-bar select:focus{border-color:var(--gold)}
+.btn-add{
+  padding:12px 20px;border-radius:var(--radius-sm);border:none;
+  background:linear-gradient(135deg, var(--gold), #B8860B);
+  color:#1A0A0A;font-size:15px;font-weight:700;cursor:pointer;
+  transition:transform 0.15s, box-shadow 0.2s;white-space:nowrap;
+  box-shadow:0 0 8px rgba(212,175,55,0.2);
+}
+.btn-add:active{transform:scale(0.93)}
+.btn-add:disabled{opacity:0.3;transform:none;box-shadow:none}
+/* List */
+.list{ padding:6px 14px;position:relative;z-index:1; }
+.empty-state{text-align:center;padding:60px 20px;color:var(--text3);}
+.empty-state .icon{font-size:52px;margin-bottom:12px;opacity:0.6;}
+.empty-state p{font-size:14px;line-height:1.6}
+/* Item */
+.item{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 14px;margin-bottom:6px;
+  background:linear-gradient(135deg, var(--card), var(--card2));
+  border-radius:var(--radius-sm);
+  border:1px solid var(--border);
+  transition:all 0.25s;position:relative;
+  box-shadow:0 1px 4px rgba(0,0,0,0.2);
+}
+.item:active{transform:scale(0.99)}
+.item.done{
+  background:linear-gradient(135deg, #1A1A1A, var(--done-bg));
+  border-color:var(--done);opacity:0.7;
+}
+.item.done .item-content .text{text-decoration:line-through;color:var(--text3)}
+.item-check{
+  width:26px;height:26px;border-radius:50%;
+  border:2px solid var(--text3);background:transparent;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:all 0.25s;
+  position:relative;
+}
+.item.done .item-check{
+  background:linear-gradient(135deg, var(--done), #2A5A3A);
+  border-color:var(--done);
+  box-shadow:0 0 8px rgba(74,122,90,0.3);
+}
+.item-check.checked::after{
+  content:'✦';color:var(--gold2);font-size:16px;font-weight:bold;
+  text-shadow:0 0 6px rgba(255,215,0,0.5);
+}
+.item-content{flex:1;min-width:0}
+.item-content .text{font-size:15px;line-height:1.3;word-break:break-word}
+.item-content .meta{display:flex;gap:6px;margin-top:4px;flex-wrap:wrap}
+.category-tag{font-size:10px;padding:2px 9px;border-radius:10px;font-weight:600;letter-spacing:0.3px}
+.cat-belanja{background:rgba(139,26,26,0.2);color:var(--pixie);border:1px solid rgba(255,143,171,0.2)}
+.cat-todo{background:rgba(212,175,55,0.15);color:var(--gold2);border:1px solid rgba(212,175,55,0.2)}
+.cat-wishlist{background:rgba(221,160,221,0.15);color:var(--pixie3);border:1px solid rgba(221,160,221,0.2)}
+.cat-lainnya{background:rgba(255,248,220,0.1);color:var(--star);border:1px solid rgba(255,248,220,0.15)}
+.item-time{font-size:10px;color:var(--text3);margin-left:auto;text-align:right;line-height:1.4}
+.item-time .author{color:var(--pixie2)}
+.item-del{width:32px;height:32px;border-radius:50%;border:none;
+  background:transparent;color:var(--text3);font-size:14px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:all 0.2s;}
+.item-del:active{background:var(--accent2);color:var(--gold2)}
+/* Status bar */
+.status-bar{
+  position:fixed;bottom:0;left:0;right:0;z-index:200;
+  padding:8px 14px;font-size:11px;text-align:center;backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);display:flex;justify-content:center;align-items:center;gap:8px;
+  border-top:1px solid var(--border);
+}
+.status-bar.connected{background:rgba(10,20,10,0.95);color:#7AC08A}
+.status-bar.disconnected{background:rgba(30,10,10,0.95);color:var(--pixie)}
+.status-bar .dot{
+  width:8px;height:8px;border-radius:50%;display:inline-block;
+  box-shadow:0 0 6px currentColor;
+}
+.status-bar.connected .dot{background:#7AC08A}
+.status-bar.disconnected .dot{background:var(--pixie)}
+.status-bar .users{color:var(--pixie2);margin-left:auto;letter-spacing:0.5px}
+/* Loading */
+.loading{text-align:center;padding:30px;color:var(--text3);font-size:13px}
+/* Animations */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.item{animation:fadeIn 0.2s ease}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(212,175,55,0.5)}70%{box-shadow:0 0 0 12px rgba(212,175,55,0)}100%{box-shadow:0 0 0 0 rgba(212,175,55,0)}}
+.btn-add.pulse{animation:pulse 0.5s}
+
+/* ✨ Pixie dust entry effect */
+@keyframes sparkleIn{
+  0%{opacity:0;transform:scale(0.8) rotate(-3deg)}
+  50%{opacity:0.8}
+  100%{opacity:1;transform:scale(1) rotate(0deg)}
+}
+.item:first-child{animation:sparkleIn 0.3s ease}
+</style>
+<link rel="preconnect" href="https://www.gstatic.com">
+<link rel="preconnect" href="https://firebase.googleapis.com">
+</head>
+<body>
+
+<header>
+  <h1>⚔ ♥ BORIMMM <span class="pix">SHARE</span> <span class="gwm">♥</span> ✨</h1>
+  <p>✦ spartan hearts, pixie souls ✦</p>
+</header>
+
+<div class="tabs" id="tabs">
+  <div class="tab active" data-filter="all">Semua <span class="count" id="c-all"></span></div>
+  <div class="tab" data-filter="belanja">🛒 Belanja <span class="count" id="c-belanja"></span></div>
+  <div class="tab" data-filter="todo">✅ To-Do <span class="count" id="c-todo"></span></div>
+  <div class="tab" data-filter="wishlist">⭐ Wishlist <span class="count" id="c-wishlist"></span></div>
+  <div class="tab" data-filter="lainnya">📦 Lainnya <span class="count" id="c-lainnya"></span></div>
+</div>
+
+<div class="input-bar">
+  <input type="text" id="itemInput" placeholder="Tambah item..." maxlength="200" autocomplete="off">
+  <select id="categorySelect">
+    <option value="belanja">🛒 Belanja</option>
+    <option value="todo">✅ To-Do</option>
+    <option value="wishlist">⭐ Wishlist</option>
+    <option value="lainnya">📦 Lainnya</option>
+  </select>
+  <button class="btn-add" id="btnAdd" disabled>✦</button>
+</div>
+
+<div class="list" id="listContainer">
+  <div class="loading">Memuat...</div>
+</div>
+
+<div class="status-bar" id="statusBar">
+  <span class="dot"></span>
+  <span id="statusText">Menghubungkan...</span>
+  <span class="users" id="usersOnline"></span>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+// ======================== INIT FIREBASE ========================
+let firebaseOk = false;
+try {
+  if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "ISI_API_KEY_DISINI") {
+    firebase.initializeApp(firebaseConfig);
+    firebaseOk = true;
+  }
+} catch(e) {}
+
+// ======================== APP STATE ========================
+let currentFilter = "all";
+let allItems = {};
+let userId = null;
+let userName = "Aku";
+let dbRef = null;
+let connectedUsers = 0;
+let myRef = null;
+
+// ======================== DOM REFS ========================
+const listEl = document.getElementById("listContainer");
+const inputEl = document.getElementById("itemInput");
+const btnAdd = document.getElementById("btnAdd");
+const catSelect = document.getElementById("categorySelect");
+const statusBar = document.getElementById("statusBar");
+const statusText = document.getElementById("statusText");
+const usersOnline = document.getElementById("usersOnline");
+
+// ======================== PWA SETUP ========================
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js").catch(()=>{});
+}
+
+// ======================== AUTH & DB ========================
+async function initApp() {
+  if (!firebaseOk) {
+    listEl.innerHTML = `<div class="empty-state">
+      <div class="icon">⚙️</div>
+      <p><b>Belum dikonfigurasi</b><br>Isi dulu Firebase config di file <code>firebase-config.js</code><br><br>
+      📖 Baca <b>README.md</b> untuk panduan</p>
+    </div>`;
+    statusBar.className = "status-bar disconnected";
+    statusText.textContent = "Konfigurasi Firebase dulu";
+    return;
+  }
+
+  try {
+    const userCred = await firebase.auth().signInAnonymously();
+    userId = userCred.user.uid;
+
+    const savedName = localStorage.getItem("borimmm_name");
+    if (savedName) {
+      userName = savedName;
+    } else {
+      userName = prompt("Siapa nama kamu?", "Aku");
+      if (!userName) userName = "Aku";
+      localStorage.setItem("borimmm_name", userName);
+    }
+
+    // Presence
+    const presenceRef = firebase.database().ref(".info/connected");
+    myRef = firebase.database().ref("presence/" + userId);
+
+    presenceRef.on("value", async (snap) => {
+      if (snap.val()) {
+        myRef.onDisconnect().remove();
+        await myRef.set({name: userName, online: true, lastSeen: Date.now()});
+      }
+    });
+
+    firebase.database().ref("presence").on("value", (snap) => {
+      const data = snap.val() || {};
+      connectedUsers = Object.keys(data).length;
+      const names = Object.values(data).map(d=>d.name);
+      const unique = [...new Set(names)];
+      if (connectedUsers > 1) {
+        usersOnline.textContent = `⚔♥ ${unique.join(" & ")} ♥✦`;
+      } else {
+        usersOnline.textContent = `💔 menunggu...`;
+      }
+    });
+
+    dbRef = firebase.database().ref("items");
+
+    dbRef.on("value", (snap) => {
+      allItems = snap.val() || {};
+      renderList();
+      updateCounts();
+    });
+
+    statusBar.className = "status-bar connected";
+    statusText.textContent = "✦ Terhubung ✦";
+
+  } catch(e) {
+    listEl.innerHTML = `<div class="empty-state">
+      <div class="icon">❌</div>
+      <p><b>Koneksi gagal</b><br>${e.message}</p>
+    </div>`;
+    statusBar.className = "status-bar disconnected";
+    statusText.textContent = "Gagal: " + e.message;
+  }
+}
+
+// ======================== RENDER ========================
+function renderList() {
+  const entries = Object.entries(allItems);
+  if (entries.length === 0) {
+    listEl.innerHTML = `<div class="empty-state">
+      <div class="icon">✨📝✨</div>
+      <p><b>Masih kosong, prajurit kecil ✦</b><br>Tambah item pertama kalian! ♥</p>
+    </div>`;
+    return;
+  }
+
+  const sorted = entries
+    .map(([k,v]) => ({id:k, ...v}))
+    .sort((a,b) => {
+      if (a.done !== b.done) return a.done ? 1 : -1;
+      return (b.createdAt || 0) - (a.createdAt || 0);
+    });
+
+  const filtered = currentFilter === "all"
+    ? sorted
+    : sorted.filter(i => i.category === currentFilter);
+
+  if (filtered.length === 0) {
+    listEl.innerHTML = `<div class="empty-state">
+      <div class="icon">📍</div>
+      <p><b>Kosong di sini</b><br>Belum ada item kategori ini</p>
+    </div>`;
+    return;
+  }
+
+  let html = "";
+  for (const item of filtered) {
+    const catLabel = {belanja:"🛒",todo:"✅",wishlist:"⭐",lainnya:"📦"}[item.category]||"📦";
+    const done = item.done ? "done" : "";
+    const checked = item.done ? "checked" : "";
+    const time = item.createdAt ? new Date(item.createdAt).toLocaleDateString("id", {day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}) : "";
+    const author = item.author ? `oleh ${item.author}` : "";
+
+    html += `<div class="item ${done}" data-id="${item.id}">
+      <div class="item-check ${checked}" onclick="toggleItem('${item.id}')"></div>
+      <div class="item-content">
+        <div class="text">${escapeHtml(item.text)}</div>
+        <div class="meta">
+          <span class="category-tag cat-${item.category}">${catLabel} ${item.category}</span>
+          ${item.note ? `<span style="font-size:11px;color:var(--text3)">📎 ${escapeHtml(item.note)}</span>` : ""}
+        </div>
+      </div>
+      <div class="item-time">
+        ${time ? `<span>${time}</span>` : ""}
+        ${author ? `<span class="author"> ${author}</span>` : ""}
+      </div>
+      <button class="item-del" onclick="deleteItem('${item.id}')">✕</button>
+    </div>`;
+  }
+  listEl.innerHTML = html;
+}
+
+function updateCounts() {
+  const entries = Object.values(allItems);
+  const cats = {all: entries.length, belanja:0, todo:0, wishlist:0, lainnya:0};
+  for (const e of entries) {
+    if (cats[e.category] !== undefined) cats[e.category]++;
+  }
+  for (const [k,v] of Object.entries(cats)) {
+    const el = document.getElementById("c-" + k);
+    if (el) el.textContent = v;
+  }
+}
+
+// ======================== ACTIONS ========================
+async function addItem() {
+  const text = inputEl.value.trim();
+  if (!text || !dbRef) return;
+
+  const category = catSelect.value;
+  btnAdd.disabled = true;
+  btnAdd.classList.add("pulse");
+  setTimeout(() => btnAdd.classList.remove("pulse"), 600);
+
+  try {
+    await dbRef.push({
+      text: text,
+      category: category,
+      done: false,
+      author: userName,
+      createdAt: Date.now()
+    });
+    inputEl.value = "";
+    inputEl.focus();
+  } catch(e) {
+    alert("Gagal: " + e.message);
+  }
+  btnAdd.disabled = false;
+}
+
+async function toggleItem(id) {
+  if (!dbRef) return;
+  const item = allItems[id];
+  if (!item) return;
+  try {
+    await dbRef.child(id).update({done: !item.done});
+  } catch(e) {}
+}
+
+async function deleteItem(id) {
+  if (!dbRef) return;
+  try {
+    await dbRef.child(id).remove();
+  } catch(e) {}
+}
+
+// ======================== TABS ========================
+document.querySelectorAll(".tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+    tab.classList.add("active");
+    currentFilter = tab.dataset.filter;
+    renderList();
+  });
+});
+
+// ======================== INPUT ========================
+inputEl.addEventListener("input", () => {
+  btnAdd.disabled = !inputEl.value.trim();
+});
+inputEl.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !btnAdd.disabled) addItem();
+});
+btnAdd.addEventListener("click", addItem);
+
+// ======================== UTILS ========================
+function escapeHtml(str) {
+  const d = document.createElement("div");
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+// ======================== START ========================
+initApp();
+
+if (firebaseOk) {
+  firebase.database().ref(".info/connected").on("value", (snap) => {
+    if (snap.val() === false) {
+      statusBar.className = "status-bar disconnected";
+      statusText.textContent = "✦ Terputus ✦";
+    }
+  });
+}
+</script>
+</body>
+</html>
