@@ -1,7 +1,3 @@
-// ==========================================
-// 🔧 FIREBASE CONFIG — Borimm Share ♥
-// ==========================================
-
 const firebaseConfig = {
   apiKey: "AIzaSyCTW37mmuUT6VMnw-6vyIynbwtnVV_M29Y",
   authDomain: "borimm-share.firebaseapp.com",
